@@ -2,7 +2,7 @@ const keyValueToString = ([key, value]) => {
   return `${key}=${value}`;
 };
 
-module.exports.queryString = (str) => {
+export function queryString(str) {
   const hasInvalidParam = Object.values(str).some(
     (item) => typeof item === "object" && !Array.isArray(item)
   );
@@ -10,9 +10,9 @@ module.exports.queryString = (str) => {
   if (hasInvalidParam) throw new Error("Please check your params");
 
   return Object.entries(str).map(keyValueToString).join("&");
-};
+}
 
-module.exports.parse = (string) => {
+export function parse(string) {
   const arrayOfParams = string.split("&");
   const obj = Object.fromEntries(
     arrayOfParams.map((item) => {
@@ -26,4 +26,4 @@ module.exports.parse = (string) => {
     })
   );
   return obj;
-};
+}
