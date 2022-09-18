@@ -1,13 +1,20 @@
 import find from "lodash/find";
 import remove from "lodash/remove";
+import Money from "./money";
+import { calculateDiscount } from "./discount.utils";
 
 export default class Cart {
   items = [];
 
   getTotal() {
     return this.items.reduce((accumulator, currentItem) => {
-      return accumulator + currentItem.product.price * currentItem.quantity;
-    }, 0);
+      const { product, quantity } = currentItem;
+      const amount = Money({ amount: product.price * quantity });
+
+      const discount = calculateDiscount(amount, currentItem);
+
+      return accumulator.add(amount).subtract(discount);
+    }, Money({ amount: 0 }));
   }
 
   add(item) {
@@ -26,10 +33,12 @@ export default class Cart {
 
   summary() {
     const total = this.getTotal();
+    const formatted = total.toFormat("$0,0.00");
     const items = this.items;
 
     return {
       total,
+      formatted,
       items,
     };
   }
